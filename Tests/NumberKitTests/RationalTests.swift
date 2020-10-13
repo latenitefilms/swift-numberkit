@@ -33,21 +33,28 @@ class RationalTests: XCTestCase {
     let r2 = Rational(43, 7)
     XCTAssert(r2.numerator == 43 && r2.denominator == 7)
     let r3 = Rational(19 * 3 * 5 * 7, 2 * 5 * 7)
-    XCTAssert(r3.numerator == 19 * 3 && r3.denominator == 2)
+    XCTAssertEqual(r3.numerator, 1995)
+    XCTAssertEqual(r3.denominator, 70)
     let r4: Rational<Int>? = Rational(from: "172346/254")
     if let r4u = r4 {
-      XCTAssertEqual(r4u.numerator, 86173)
-      XCTAssertEqual(r4u.denominator, 127)
+      XCTAssertEqual(r4u.numerator, 172346)
+      XCTAssertEqual(r4u.denominator, 254)
     } else {
       XCTFail("cannot parse r4 string")
     }
     let r5: Rational<Int>? = Rational(from: "-128/64")
     if let r5u = r5 {
-      XCTAssertEqual(r5u.numerator, -2)
-      XCTAssertEqual(r5u.denominator, 1)
+      XCTAssertEqual(r5u.numerator, -128)
+      XCTAssertEqual(r5u.denominator, 64)
     } else {
       XCTFail("cannot parse r5 string")
     }
+  }
+  
+  func testSimplify() {
+    let r0 = Rational(-128, 64).simplified
+    XCTAssertEqual(r0.numerator, -2)
+    XCTAssertEqual(r0.denominator, 1)
   }
   
   func testPlus() {
@@ -56,6 +63,8 @@ class RationalTests: XCTestCase {
     XCTAssert(r1 == Rational(from: "17524/343"))
     XCTAssert(r1 == 17524/343)
     let r2: Rational<Int> = (74433/215).plus(312/15)
+    XCTAssertEqual(r2.numerator, 236715)
+    XCTAssertEqual(r2.denominator, 645)
     XCTAssert(r2 == 367)
     let r3: Rational<Int> = (458200/50).plus(3440/17)
     XCTAssert(r3 == 159228/17)
@@ -87,6 +96,12 @@ class RationalTests: XCTestCase {
     XCTAssertEqual(r1, Rational(10 * 49, 3 * 31))
   }
   
+  func testEquals() {
+    let r1 = Rational(1/2)
+    let r2 = Rational(2/4)
+    XCTAssertEqual(r1, r2)
+  }
+  
   func testRationalize() {
     let r1 = Rational<Int>(1.0/3.0)
     XCTAssertEqual(r1, Rational(1, 3))
@@ -100,9 +115,12 @@ class RationalTests: XCTestCase {
   
   static let allTests = [
     ("testConstructors", testConstructors),
+    ("testSimplify", testSimplify),
     ("testPlus", testPlus),
     ("testMinus", testMinus),
     ("testTimes", testTimes),
     ("testDividedBy", testDividedBy),
+    ("testEquals", testEquals),
+    ("testRationalize", testRationalize),
   ]
 }

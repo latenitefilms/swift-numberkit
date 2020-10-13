@@ -53,6 +53,9 @@ public protocol RationalNumber: SignedNumeric,
 
   /// Is true if the rational value is zero.
   var isZero: Bool { get }
+  
+  /// The simplfied form of the rational value.
+  var simplified: Self { get }
 
   /// The absolute rational value (without sign).
   var abs: Self { get }
@@ -79,6 +82,9 @@ public protocol RationalNumber: SignedNumeric,
 
   /// Raises this rational value to the power of `exp`.
   func toPower(of exp: Integer) -> Self
+  
+  /// Simplifies the rational value and reports the result together with a boolean indicating an overflow.
+  func simplifiedReportingOverflow() -> (partialValue: Self, overflow: Bool)
   
   /// Adds `rhs` to `self` and reports the result together with a boolean indicating an overflow.
   func addingReportingOverflow(_ rhs: Self) -> (partialValue: Self, overflow: Bool)
@@ -132,9 +138,8 @@ public struct Rational<T: IntegerNumber>: RationalNumber, CustomStringConvertibl
     let anum = Swift.abs(numerator)
       // numerator < 0 ? -numerator : numerator
     let adenom = denominator < 0 ? -denominator : denominator
-    let div = Rational.gcd(anum, adenom)
-    self.numerator = negative ? -(anum / div) : (anum / div)
-    self.denominator = adenom / div
+    self.numerator = negative ? -anum : anum
+    self.denominator = adenom
   }
 
   /// Creates a `Rational` from the given integer value of type `T`
@@ -252,6 +257,13 @@ public struct Rational<T: IntegerNumber>: RationalNumber, CustomStringConvertibl
     hasher.combine(denominator)
   }
   
+  /// The simplified form of the rational value.
+  public var simplified: Rational<T> {
+    let anum = numerator < 0 ? -numerator : numerator
+    let div = Rational.gcd(anum, denominator)
+    return Rational<T>(numerator / div, denominator / div)
+  }
+  
   /// The absolute rational value (without sign).
   public var abs: Rational<T> {
     return self.magnitude
@@ -350,6 +362,15 @@ extension Rational: ExpressibleByStringLiteral {
   public init(unicodeScalarLiteral value: String) {
     self.init(stringLiteral: value)
   }
+  
+  /// Creates the simplified form of the rational value, reporting the result and a boolean indicating overflow.
+  public func simplifiedReportingOverflow() -> (partialValue: Self, overflow: Bool) {
+    let (anum, overflow1) = Rational.absWithOverflow(numerator)
+    let (div, overflow2) = Rational.gcdWithOverflow(anum, denominator)
+    let (num, overflow3) = numerator.dividedReportingOverflow(by: div)
+    let (denom, overflow4) = denominator.dividedReportingOverflow(by: div)
+    return (Rational<T>(num, denom), overflow1 || overflow2 || overflow3 || overflow4)
+  }
 
   /// Compute absolute number of `num` and return a tuple consisting of the result and a
   /// boolean indicating whether there was an overflow.
@@ -366,12 +387,9 @@ extension Rational: ExpressibleByStringLiteral {
     let negative = numerator > 0 && denominator < 0 || numerator < 0 && denominator > 0
     let (anum, overflow1) = Rational.absWithOverflow(numerator)
     let (adenom, overflow2) = Rational.absWithOverflow(denominator)
-    let div = Rational.gcd(anum, adenom)
-    let (n, overflow3) = anum.dividedReportingOverflow(by: div)
-    let (numer, overflow4) = negative ? T.zero.subtractingReportingOverflow(n) : (n, false)
-    let (denom, overflow5) = adenom.dividedReportingOverflow(by: div)
-    return (Rational(numerator: numer, denominator: denom),
-            overflow1 || overflow2 || overflow3 || overflow4 || overflow5)
+    let (numer, overflow3) = negative ? T.zero.subtractingReportingOverflow(anum) : (anum, false)
+    return (Rational(numerator: numer, denominator: adenom),
+            overflow1 || overflow2 || overflow3)
   }
   
   /// Compute the smalles common denominator of `this` and `that` and return it together

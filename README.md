@@ -1,3 +1,7 @@
+**Note:** This has been adapted from [Swift NumberKit](https://github.com/objecthub/swift-numberkit) by Matthias Zenger.
+
+The goal with this modification was to make simplification an "opt in" operation. By default, `Rational` values will not simpify when created, and will generally keep the numerator unchanged unless combining rational values with different numberators.
+
 # Swift NumberKit
 
 [![Platforms: macOS, iOS, Linux](https://img.shields.io/badge/Platforms-macOS,%20iOS,%20Linux-blue.svg?style=flat)](https://developer.apple.com/osx/) [![Language: Swift 5.3](https://img.shields.io/badge/Language-Swift%205.3-green.svg?style=flat)](https://developer.apple.com/swift/) [![IDE: Xcode 12.0](https://img.shields.io/badge/IDE-Xcode%2012.0-orange.svg?style=flat)](https://developer.apple.com/xcode/) [![Package managers: SwiftPM, Carthage](https://img.shields.io/badge/Package%20managers-SwiftPM,%20Carthage-8E64B0.svg?style=flat)](https://github.com/Carthage/Carthage) [![License: Apache](http://img.shields.io/badge/License-Apache-lightgrey.svg?style=flat)](https://raw.githubusercontent.com/objecthub/swift-numberkit/master/LICENSE)
