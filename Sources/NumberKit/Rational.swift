@@ -82,6 +82,9 @@ public protocol RationalNumber: SignedNumeric,
 
   /// Divides this rational value by `rhs` and returns the result.
   func divided(by rhs: Self) -> Self
+    
+  /// Calculate the remainder of dividing `self` by `rhs` and return the result.
+  func remainder(dividingBy rhs: Self) -> Self
 
   /// Raises this rational value to the power of `exp`.
   func toPower(of exp: Integer) -> Self
@@ -103,6 +106,10 @@ public protocol RationalNumber: SignedNumeric,
   /// Divides `self` by `rhs` and reports the result together with a boolean indicating
   /// an overflow.
   func dividedReportingOverflow(by rhs: Self) -> (partialValue: Self, overflow: Bool)
+
+  /// Calculates the remainder of dividing `self` by `rhs` and reports the result together
+  /// with a boolean indicating an overflow.
+  func remainderReportingOverflow(dividingBy rhs: Self) -> (partialValue: Self, overflow: Bool)
 
   /// Returns the greatest common denominator for `self` and `y` and a boolean which indicates
   /// whether there was an overflow.
@@ -306,6 +313,12 @@ public struct Rational<T: IntegerNumber>: RationalNumber, CustomStringConvertibl
     return Rational(self.numerator * rhs.denominator, self.denominator * rhs.numerator)
   }
 
+  /// Calculate the remainder of dividing `self` by `rhs` and return the result.
+  public func remainder(dividingBy rhs: Rational<T>) -> Rational<T> {
+    let (n1, n2, denom) = self.commonDenomWith(rhs)
+    return Rational(n1 % n2, denom)
+  }
+
   /// Raises this rational value to the power of `exp`.
   public func toPower(of exp: T) -> Rational<T> {
     if (exp < 0) {
@@ -368,8 +381,8 @@ extension Rational: ExpressibleByStringLiteral {
   /// Creates a normalized rational number from a given numerator and denominator, along with a Boolean
   /// indicating whether overflow occurred in the operation, if the correct value is not
   /// representable in the given type.
-public static func normalizedWithOverflow(_ numerator: T, _ denominator: T) ->
-                                         (value: Rational<T>, overflow: Bool) {
+  public static func normalizedWithOverflow(_ numerator: T, _ denominator: T) ->
+                                           (value: Rational<T>, overflow: Bool) {
     guard denominator != 0 else {
       return (0, true)
     }
@@ -491,6 +504,23 @@ public static func normalizedWithOverflow(_ numerator: T, _ denominator: T) ->
     return (res, overflow1 || overflow2 || overflow3)
   }
 
+  /// Calculate the remainder of dividing `self` by `rhs` and return a tuple consisting of the result
+  /// and a boolean which indicates whether there was an overflow.
+  public func remainderReportingOverflow(dividingBy rhs: Rational<T>)
+                                     -> (partialValue: Rational<T>, overflow: Bool) {
+    // Bring both Rational numbers to a common denominator and check for overflow
+    let (n1, n2, denom, overflow1) = Rational.commonDenomWithOverflow(self, rhs)
+    
+    // Calculate the remainder of the numerators and check for overflow
+    let (numer, overflow2) = n1.remainderReportingOverflow(dividingBy: n2)
+    
+    // Create a new Rational number with the remainder and check for overflow
+    let (res, overflow3) = Rational.rationalWithOverflow(numer, denom)
+    
+    // Return the result and the overflow status
+    return (res, overflow1 || overflow2 || overflow3)
+  }
+
   /// Returns the greatest common denominator for `self` and `y` and a boolean which indicates
   /// whether there was an overflow.
   public func gcdReportingOverflow(with y: Rational<T>)
@@ -538,6 +568,16 @@ public func / <R: RationalNumber>(lhs: R, rhs: R) -> R {
 /// Divides `lhs` by `rhs` and returns the result.
 public func / <T: SignedInteger>(lhs: T, rhs: T) -> Rational<T> {
   return Rational(lhs, rhs)
+}
+
+/// Returns the remainder of dividing `lhs` by `rhs`.
+public func % <R: RationalNumber>(lhs: R, rhs: R) -> R {
+  return lhs.remainder(dividingBy: rhs)
+}
+
+/// Returns the remainder of dividing `lhs` by `rhs`.
+public func % <T: SignedInteger>(lhs: T, rhs: T) -> Rational<T> {
+  return Rational(lhs % rhs, 1)
 }
 
 /// Raises rational value `lhs` to the power of `exp`.

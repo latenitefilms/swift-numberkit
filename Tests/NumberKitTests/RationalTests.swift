@@ -96,6 +96,28 @@ class RationalTests: XCTestCase {
     let r1 = Rational(10, -3).divided(by: -31/49)
     XCTAssertEqual(r1, Rational(10 * 49, 3 * 31))
   }
+
+  func testRemainder() {
+    let r1 = Rational(10, 3).remainder(dividingBy: 9/3)
+    XCTAssertEqual(r1, Rational(1, 3))
+
+    // A whole number division, should equal using remainder for an integer
+    let r3 = Rational(10, 1).remainder(dividingBy: 3/1)
+    XCTAssertEqual(r3, Rational(1, 1))
+
+    // Using remainderWithOverflow
+    let (r4, overflow) = Rational(10, 3).remainderReportingOverflow(dividingBy: 9/3)
+    XCTAssertEqual(r4, Rational(1, 3))
+    XCTAssertFalse(overflow)
+
+    let (r5, overflow2) = Rational(-10, 3).remainderReportingOverflow(dividingBy: 9/3)
+    XCTAssertEqual(r5, Rational(-1, 3))
+    XCTAssertFalse(overflow2)
+
+    let (r6, overflow3) = Rational(10, -3).remainderReportingOverflow(dividingBy: 0)
+    XCTAssertEqual(r6, Rational(-10, 3))
+    XCTAssertTrue(overflow3)
+  }
   
   func testEquals() {
     let r1 = Rational(1/2)
