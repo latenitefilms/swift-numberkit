@@ -57,8 +57,8 @@ public protocol RationalNumber: SignedNumeric,
   /// Is true if the rational value is zero.
   var isZero: Bool { get }
   
-  /// The simplfied form of the rational value.
-  var simplified: Self { get }
+  /// The normalized/simplfied form of the rational value.
+  var normalized: Self { get }
 
   /// The absolute rational value (without sign).
   var abs: Self { get }
@@ -86,8 +86,8 @@ public protocol RationalNumber: SignedNumeric,
   /// Raises this rational value to the power of `exp`.
   func toPower(of exp: Integer) -> Self
   
-  /// Simplifies the rational value and reports the result together with a boolean indicating an overflow.
-  func simplifiedReportingOverflow() -> (partialValue: Self, overflow: Bool)
+  /// Normalizes/simplifies the rational value and reports the result together with a boolean indicating an overflow.
+  func normalizedReportingOverflow() -> (partialValue: Self, overflow: Bool)
   
   /// Adds `rhs` to `self` and reports the result together with a boolean indicating an overflow.
   func addingReportingOverflow(_ rhs: Self) -> (partialValue: Self, overflow: Bool)
@@ -244,10 +244,10 @@ public struct Rational<T: IntegerNumber>: RationalNumber, CustomStringConvertibl
     hasher.combine(denominator)
   }
   
-  /// The simplified form of the rational value.
-  public var simplified: Rational<T> {
+  /// The normalized/simplfied form of the rational value.
+  public var normalized: Rational<T> {
     let anum = numerator < 0 ? -numerator : numerator
-    let div = Rational.gcd(anum, denominator)
+    let div = T.gcd(anum, denominator)
     return Rational<T>(numerator / div, denominator / div)
   }
   
@@ -350,10 +350,10 @@ extension Rational: ExpressibleByStringLiteral {
     self.init(stringLiteral: value)
   }
   
-  /// Creates the simplified form of the rational value, reporting the result and a boolean indicating overflow.
-  public func simplifiedReportingOverflow() -> (partialValue: Self, overflow: Bool) {
+  /// Creates the normalized/simplified form of the rational value, reporting the result and a boolean indicating overflow.
+  public func normalizedReportingOverflow() -> (partialValue: Self, overflow: Bool) {
     let (anum, overflow1) = Rational.absWithOverflow(numerator)
-    let (div, overflow2) = Rational.gcdWithOverflow(anum, denominator)
+    let (div, overflow2) = T.gcdWithOverflow(anum, denominator)
     let (num, overflow3) = numerator.dividedReportingOverflow(by: div)
     let (denom, overflow4) = denominator.dividedReportingOverflow(by: div)
     return (Rational<T>(num, denom), overflow1 || overflow2 || overflow3 || overflow4)
@@ -365,41 +365,10 @@ extension Rational: ExpressibleByStringLiteral {
     return num < 0 ? T.zero.subtractingReportingOverflow(num) : (num, false)
   }
 
-  /// Creates a rational number from a numerator and a denominator.
-  public static func rationalWithOverflow(_ numerator: T, _ denominator: T)
-                                      -> (value: Rational<T>, overflow: Bool) {
-    guard denominator != 0 else {
-      return (Rational(0), true)
-    }
-    let negative = numerator > 0 && denominator < 0 || numerator < 0 && denominator > 0
-    let (anum, overflow1) = Rational.absWithOverflow(numerator)
-    let (adenom, overflow2) = Rational.absWithOverflow(denominator)
-    let (numer, overflow3) = negative ? T.zero.subtractingReportingOverflow(anum) : (anum, false)
-    return (Rational(numerator: numer, denominator: adenom),
-            overflow1 || overflow2 || overflow3)
-  }
-  }
-
-  /// Creates a rational number from a given numerator and denominator, along with a Boolean
+  /// Creates a normalized rational number from a given numerator and denominator, along with a Boolean
   /// indicating whether overflow occurred in the operation, if the correct value is not
   /// representable in the given type.
-  public static func rationalWithOverflow(_ numerator: T, _ denominator: T) ->
-                                         (value: Rational<T>, overflow: Bool) {
-    guard denominator != 0 else {
-      return (0, true)
-    }
-    let negative = numerator > 0 && denominator < 0 || numerator < 0 && denominator > 0
-    let (anum, overflow1) = Rational.absWithOverflow(numerator)
-    let (adenom, overflow2) = Rational.absWithOverflow(denominator)
-    let div = Rational.gcd(anum, adenom)
-    let (n, overflow3) = anum.dividedReportingOverflow(by: div)
-    let (numer, overflow4) = negative ? T.zero.subtractingReportingOverflow(n) : (n, false)
-    let (denom, overflow5) = adenom.dividedReportingOverflow(by: div)
-    return (Rational(numerator: numer, denominator: denom),
-            overflow1 || overflow2 || overflow3 || overflow4 || overflow5)
-  }
-
-  public static func rationalWithOverflow(_ numerator: T, _ denominator: T) ->
+public static func normalizedWithOverflow(_ numerator: T, _ denominator: T) ->
                                          (value: Rational<T>, overflow: Bool) {
     guard denominator != 0 else {
       return (0, true)
@@ -421,6 +390,32 @@ extension Rational: ExpressibleByStringLiteral {
     // Overflows if denominator == T.min and numerator is odd.
     let (absDenominator, denominatorOverflow) = T.absWithOverflow(normalizedDenominator)
     // The rational value `absNumerator / absDenominator` is already normalized.
+    let resultNumerator = (numerator > 0) == (denominator > 0) ? absNumerator : -absNumerator
+    let resultOverflow = numeratorOverflow || denominatorOverflow
+    return (Rational(numerator: resultNumerator, denominator: absDenominator), resultOverflow)
+  }
+
+  /// Creates a rational number from a given numerator and denominator, along with a Boolean
+  /// indicating whether overflow occurred in the operation, if the correct value is not
+  /// representable in the given type.
+  public static func rationalWithOverflow(_ numerator: T, _ denominator: T) ->
+                                         (value: Rational<T>, overflow: Bool) {
+    guard denominator != 0 else {
+      return (0, true)
+    }
+    // Eliminate special cases early that might otherwise report overflow.
+    if denominator == 1 {
+      return (Rational(numerator), false)
+    } else if numerator == 0 {
+      return (0, false)
+    } else if numerator == denominator {
+      return (1, false)
+    }
+    // Numerator and denominator are now both non-zero.
+    // Overflows if numerator == T.min and denominator is odd.
+    let (absNumerator, numeratorOverflow) = T.absWithOverflow(numerator)
+    // Overflows if denominator == T.min and numerator is odd.
+    let (absDenominator, denominatorOverflow) = T.absWithOverflow(denominator)
     let resultNumerator = (numerator > 0) == (denominator > 0) ? absNumerator : -absNumerator
     let resultOverflow = numeratorOverflow || denominatorOverflow
     return (Rational(numerator: resultNumerator, denominator: absDenominator), resultOverflow)

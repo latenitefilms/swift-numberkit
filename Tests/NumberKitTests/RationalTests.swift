@@ -52,8 +52,8 @@ class RationalTests: XCTestCase {
     }
   }
   
-  func testSimplify() {
-    let r0 = Rational(-128, 64).simplified
+  func testNormalized() {
+    let r0 = Rational(-128, 64).normalized
     XCTAssertEqual(r0.numerator, -2)
     XCTAssertEqual(r0.denominator, 1)
   }
@@ -116,7 +116,7 @@ class RationalTests: XCTestCase {
 
   static let allTests = [
     ("testConstructors", testConstructors),
-    ("testSimplify", testSimplify),
+    ("testNormalized", testNormalized),
     ("testPlus", testPlus),
     ("testMinus", testMinus),
     ("testTimes", testTimes),
