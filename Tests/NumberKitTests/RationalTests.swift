@@ -19,10 +19,11 @@
 //
 
 import XCTest
+
 @testable import NumberKit
 
 class RationalTests: XCTestCase {
-  
+
   func testConstructors() {
     let r0: Rational<Int> = 8
     XCTAssert(r0.numerator == 8 && r0.denominator == 1)
@@ -72,7 +73,7 @@ class RationalTests: XCTestCase {
     let r4: Rational<BigInt> = x.plus(Rational(BigInt(3440)/BigInt(17)))
     XCTAssert(r4 == Rational(BigInt(159228)/BigInt(17)))
   }
-  
+
   func testMinus() {
     let r1 = Rational(123, 5).minus(247/10)
     XCTAssertEqual(r1, Rational(1, 10).negate)
@@ -81,7 +82,7 @@ class RationalTests: XCTestCase {
     let r3 = Rational(98232, 536).minus(123/12)
     XCTAssertEqual(r3, Rational(46369, 268))
   }
-  
+
   func testTimes() {
     let r1 = Rational(4, 8).times(2)
     XCTAssertEqual(r1, 1)
@@ -90,7 +91,7 @@ class RationalTests: XCTestCase {
     let r3 = Rational(170, 9).times(-17/72)
     XCTAssertEqual(r3, Rational(-170 * 17, 9 * 72))
   }
-  
+
   func testDividedBy() {
     let r1 = Rational(10, -3).divided(by: -31/49)
     XCTAssertEqual(r1, Rational(10 * 49, 3 * 31))
@@ -112,7 +113,7 @@ class RationalTests: XCTestCase {
     let r4 = Rational<BigInt>(1931.0 / 9837491.0, precision: 1.0e-14)
     XCTAssertEqual(r4, Rational(BigInt(1931), BigInt(9837491)))
   }
-  
+
   static let allTests = [
     ("testConstructors", testConstructors),
     ("testSimplify", testSimplify),

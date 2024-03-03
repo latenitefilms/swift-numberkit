@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.4.2 (2023-01-01)
+- Support random number generation for Complex
+- Migrated project to Swift 5.7 and Xcode 14
+
+## 2.4.1 (2022-01-04)
+- Support random number generation for BigInt
+- Migrated project to Swift 5.5 and Xcode 13.2
+
+## 2.4.0 (2021-05-12)
+- Several enhancements of the `Complex` type
+- Migrated project to Swift 5.4 and Xcode 12.5
+
 ## 2.3.9 (2020-10-04)
 - Port to Swift 5.3
 - Migrated project to Xcode 12.0

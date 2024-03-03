@@ -1,10 +1,10 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.4
 //
 //  Package.swift
 //  NumberKit
 //
 //  Created by Matthias Zenger on 01/05/2017.
-//  Copyright © 2015-2020 Matthias Zenger. All rights reserved.
+//  Copyright © 2015-2023 Matthias Zenger. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -23,13 +23,6 @@ import PackageDescription
 
 let package = Package(
   name: "NumberKit",
-  
-  // Platforms define the operating systems for which this library can be compiled for.
-  platforms: [
-    .macOS(.v10_12),
-    .iOS(.v12),
-  ],
-  
   // Products define the executables and libraries produced by a package, and make them visible
   // to other packages.
   products: [
@@ -45,8 +38,12 @@ let package = Package(
   // a test suite. Targets can depend on other targets in this package, and on products
   // in packages which this package depends on.
   targets: [
-    .target(name: "NumberKit", dependencies: []),
-    .testTarget(name: "NumberKitTests", dependencies: ["NumberKit"]),
+    .target(name: "NumberKit",
+            dependencies: [],
+            exclude: ["Info.plist"]),
+    .testTarget(name: "NumberKitTests",
+                dependencies: ["NumberKit"],
+                exclude: ["Info.plist"]),
   ],
   
   // Required Swift language version.

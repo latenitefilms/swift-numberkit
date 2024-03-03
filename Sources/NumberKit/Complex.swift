@@ -30,7 +30,8 @@ import Foundation
 ///         the complex type implementation is based on.
 /// - Todo: Implement the `Arithmetic` protocol. This requires that complex numbers are
 ///         mutable.
-public protocol ComplexNumber: Equatable {
+public protocol ComplexNumber: Hashable,
+                               CustomStringConvertible {
   
   /// The floating point number type on which this complex number is based.
   associatedtype Float: FloatingPoint
@@ -56,10 +57,17 @@ public protocol ComplexNumber: Equatable {
   
   /// Returns true if either real or imaginary parts are not a number.
   var isNaN: Bool { get }
-  
+
+  /// Returns true if both real and imaginary parts are finite.
+  var isFinite: Bool { get }
+
   /// Returns true if either real or imaginary parts are infinite.
   var isInfinite: Bool { get }
-  
+
+  /// Returns the ∞-norm of this complex number. Use `norm` if the Euclidean norm
+  /// is needed.
+  var magnitude: Float { get }
+
   /// Returns the absolute value of this complex number.
   var abs: Float { get }
   
@@ -126,7 +134,7 @@ public struct Complex<T: FloatingPointNumber>: ComplexNumber,
                                                ExpressibleByIntegerLiteral,
                                                ExpressibleByFloatLiteral,
                                                CustomStringConvertible {
-  
+
   /// The real part of thix complex number.
   public let re: T
   
@@ -146,14 +154,29 @@ public struct Complex<T: FloatingPointNumber>: ComplexNumber,
 
   /// Creates a complex number with the given real and imaginary parts.
   public init(_ re: T, _ im: T) {
-    self.re = re
-    self.im = im
+    // Normalize complex numbers involving NaN
+    if re.isNaN {
+      self.re = re
+      self.im = T(0)
+    } else if im.isNaN {
+      self.re = im
+      self.im = T(0)
+    // Normalize infinite complex numbers
+    } else if re.isInfinite {
+      self.re = re
+      self.im = T(0)
+    } else if im.isInfinite {  // imaginary parts are never infinity
+      self.re = .nan
+      self.im = T(0)
+    } else {
+      self.re = re
+      self.im = im
+    }
   }
   
   /// Creates a complex number from polar coordinates
   public init(abs: T, arg: T) {
-    self.re = abs * arg.cos
-    self.im = abs * arg.sin
+    self.init(abs * arg.cos, abs * arg.sin)
   }
   
   /// Creates a real number initialized to integer `value`.
@@ -168,7 +191,7 @@ public struct Complex<T: FloatingPointNumber>: ComplexNumber,
   
   /// Returns a textual representation of this complex number
   public var description: String {
-    if im.isZero {
+    if im.isZero || re.isNaN || re.isInfinite {
       return String(describing: re)
     } else if re.isZero {
       return String(describing: im) + "i"
@@ -203,10 +226,27 @@ public struct Complex<T: FloatingPointNumber>: ComplexNumber,
   public var isNaN: Bool {
     return re.isNaN || im.isNaN
   }
-  
+
+  /// Returns true if both real and imaginary parts are finite.
+  public var isFinite: Bool {
+    return re.isFinite && im.isFinite
+  }
+
   /// Returns true if either real or imaginary parts are infinite.
   public var isInfinite: Bool {
     return re.isInfinite || im.isInfinite
+  }
+
+  /// Returns the ∞-norm of this complex number. Use `norm` if the Euclidean norm
+  /// is needed.
+  public var magnitude: T {
+    if self.isNaN {
+      return .nan
+    } else if self.isFinite {
+      return max(self.re.abs, self.im.abs)
+    } else {
+      return .infinity
+    }
   }
   
   /// Returns the absolute value of this complex number.
@@ -236,8 +276,16 @@ public struct Complex<T: FloatingPointNumber>: ComplexNumber,
   
   /// Returns the reciprocal of this complex number.
   public var reciprocal: Complex<T> {
-    let s = re * re + im * im
-    return Complex(re / s, -im / s)
+    if self.isNaN {
+      return self
+    } else if self.isZero {
+      return .infinity
+    } else if self.isInfinite {
+      return .zero
+    } else {
+      let s = re * re + im * im
+      return Complex(re / s, -im / s)
+    }
   }
   
   /// Returns the norm of this complex number.
@@ -296,6 +344,14 @@ public struct Complex<T: FloatingPointNumber>: ComplexNumber,
   /// Returns the result of dividing `self` by scalar `rhs` as a complex number.
   public func divided(by rhs: T) -> Complex<T> {
     return Complex(self.re / rhs, self.im / rhs);
+  }
+  
+  /// Returns a random complex number given a real and imaginary range.
+  public static func random<R>(realRange: Range<T>,
+                               imaginaryRange: Range<T>,
+                               using generator: inout R) -> Self where R: RandomNumberGenerator {
+    return Complex(T.random(in: realRange, using: &generator),
+                   T.random(in: imaginaryRange, using: &generator))
   }
 }
 
@@ -567,6 +623,30 @@ public func atanh<C: ComplexNumber>(_ z: C) -> C {
   let x = C(C.Float(1)).plus(z)
   let y = C(C.Float(1)).minus(z)
   return log(x.divided(by: y)).divided(by: C.Float(2))
+}
+
+/// This extensions provides access to a few complex constants.
+extension Complex {
+
+  /// The additive identity for complex numbers.
+  public static var zero: Complex {
+    Complex(0, 0)
+  }
+
+  /// The multiplicative identity for complex numbers.
+  public static var one: Complex {
+    Complex(1, 0)
+  }
+
+  /// The imaginary unit.
+  public static var i: Complex {
+    Complex(0, 1)
+  }
+
+  /// One representation of infinity.
+  public static var infinity: Complex {
+    Complex(.infinity, 0)
+  }
 }
 
 /// This extension implements the logic to make `Complex<T>` codable if `T` is codable.
