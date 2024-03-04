@@ -114,15 +114,58 @@ class RationalTests: XCTestCase {
     XCTAssertEqual(r5, Rational(-1, 3))
     XCTAssertFalse(overflow2)
 
+    // Division by zero, leading to overflow
     let (r6, overflow3) = Rational(10, -3).remainderReportingOverflow(dividingBy: 0)
     XCTAssertEqual(r6, Rational(-10, 3))
     XCTAssertTrue(overflow3)
+
+    // Using the % operator
+    let r7: Rational<Int> = Rational(10, 3) % Rational(9, 3)
+    XCTAssertEqual(r7, Rational(1, 3))
+  }
+
+  func testQuotientAndRemainder() {
+    let (q1, r1) = Rational(10, 3).quotientAndRemainder(dividingBy: 9/3)
+    XCTAssertEqual(q1, 1)
+    XCTAssertEqual(r1, Rational(1, 3))
+
+    // A whole number division, should equal using remainder for an integer
+    let (q3, r3) = Rational(10, 1).quotientAndRemainder(dividingBy: 3/1)
+    XCTAssertEqual(q3, 3)
+    XCTAssertEqual(r3, Rational(1, 1))
+
+    // Using quotientAndRemainderReportingOverflow
+    let (q4, r4, overflow) = Rational(10, 3).quotientAndRemainderReportingOverflow(dividingBy: 9/3)
+    XCTAssertEqual(q4, 1)
+    XCTAssertEqual(r4, Rational(1, 3))
+    XCTAssertFalse(overflow)
+
+    let (q5, r5, overflow2) = Rational(-10, 3).quotientAndRemainderReportingOverflow(dividingBy: 9/3)
+    XCTAssertEqual(q5, -1)
+    XCTAssertEqual(r5, Rational(-1, 3))
+    XCTAssertFalse(overflow2)
+
+    let (q6, r6, overflow3) = Rational(10, -3).quotientAndRemainderReportingOverflow(dividingBy: 0)
+    XCTAssertEqual(q6, -10)
+    XCTAssertEqual(r6, Rational(-10, 3))
+    XCTAssertTrue(overflow3)    
   }
   
   func testEquals() {
-    let r1 = Rational(1/2)
-    let r2 = Rational(2/4)
+    let r1 = Rational(1, 2)
+    let r2 = Rational(2, 4)
     XCTAssertEqual(r1, r2)
+  }
+
+  func testIntValue() {
+    let r1 = Rational(1, 2)
+    XCTAssertNil(r1.intValue)
+    let r2 = Rational(3, 2)
+    XCTAssertNil(r2.intValue)
+    let r3 = Rational(4, 2)
+    XCTAssertEqual(r3.intValue, 2)
+    let r4 = Rational(-10, 5)
+    XCTAssertEqual(r4.intValue, -2)
   }
   
   func testRationalize() {
@@ -134,6 +177,19 @@ class RationalTests: XCTestCase {
     XCTAssertEqual(r3, -Rational(17, 3))
     let r4 = Rational<BigInt>(1931.0 / 9837491.0, precision: 1.0e-14)
     XCTAssertEqual(r4, Rational(BigInt(1931), BigInt(9837491)))
+  }
+    
+  func testCasting() {
+    let i1 = Int(Rational(9/3))
+    XCTAssertEqual(i1, 3)
+    let i2 = Int(Rational(10/3))
+    XCTAssertEqual(i2, 3)
+    let i3 = Int(Rational(8/3))
+    XCTAssertEqual(i3, 2)
+    
+    let r4 = Rational<Int>(11/5)
+    let i4 = Int64(r4)
+    XCTAssertEqual(i4, 2)
   }
 
   static let allTests = [
