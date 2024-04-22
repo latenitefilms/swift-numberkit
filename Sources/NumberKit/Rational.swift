@@ -322,12 +322,14 @@ public struct Rational<T: IntegerNumber>: RationalNumber, CustomStringConvertibl
 
   /// Multiplies this rational value with `rhs` and returns the result.
   public func times(_ rhs: Rational<T>) -> Rational<T> {
+    let lhs = normalized, rhs = rhs.normalized
     return Rational(numerator * rhs.numerator, denominator * rhs.denominator)
   }
 
   /// Divides this rational value by `rhs` and returns the result.
   public func divided(by rhs: Rational<T>) -> Rational<T> {
-    return Rational(numerator * rhs.denominator, denominator * rhs.numerator)
+    let lhs = normalized, rhs = rhs.normalized
+    return Rational(lhs.numerator * rhs.denominator, lhs.denominator * rhs.numerator)
   }
 
   /// Calculate the remainder of dividing `self` by `rhs` and return the result.
