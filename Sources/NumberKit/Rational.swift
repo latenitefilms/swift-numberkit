@@ -323,7 +323,7 @@ public struct Rational<T: IntegerNumber>: RationalNumber, CustomStringConvertibl
   /// Multiplies this rational value with `rhs` and returns the result.
   public func times(_ rhs: Rational<T>) -> Rational<T> {
     let lhs = normalized, rhs = rhs.normalized
-    return Rational(numerator * rhs.numerator, denominator * rhs.denominator)
+    return Rational(lhs.numerator * rhs.numerator, lhs.denominator * rhs.denominator)
   }
 
   /// Divides this rational value by `rhs` and returns the result.
