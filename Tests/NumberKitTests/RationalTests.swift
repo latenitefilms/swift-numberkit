@@ -93,8 +93,10 @@ class RationalTests: XCTestCase {
   }
 
   func testDividedBy() {
-    let r1 = Rational(10, -3).divided(by: -31/49)
+    let r1 = Rational(10, -3).divided(by: Rational(-31, 49))
     XCTAssertEqual(r1, Rational(10 * 49, 3 * 31))
+    let r2 = Rational(1262999999875, 1263000000000).divided(by: Rational(-1262999999875, 1263000000000))
+    XCTAssertEqual(r2, Rational(-1, 1))
   }
 
   func testRemainder() {
