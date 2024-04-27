@@ -21,27 +21,24 @@
 import Foundation
 
 
-/// Class `BigInt` implements signed, arbitrary-precision integers. `BigInt` objects
-/// are immutable, i.e. all operations on `BigInt` objects return result objects.
-/// `BigInt` provides all the signed, integer arithmetic operations from Swift and
-/// implements the corresponding protocols. To make it easier to define large `BigInt`
-/// literals, `String` objects can be used for representing such numbers. They get
-/// implicitly coerced into `BigInt`.
+/// Struct `BigInt` implements signed, arbitrary-size integers. `BigInt` values
+/// are immutable, i.e. all operations on `BigInt` values return result values.
+/// There are no mutable methdos. `BigInt` provides all the signed, integer
+/// arithmetic operations from Swift and implements the corresponding protocols.
+/// `BigInt` supports `StaticBigInt`literals, i.e. is is possible to use arbitrary
+/// length integer literals. String literals containing `BigInt` numbers are still
+/// supported for backward compatibility.
 ///
 /// - Note: `BigInt` is internally implemented as a Swift array of UInt32 numbers
 ///         and a boolean to represent the sign. Due to this overhead, for instance,
 ///         representing a `UInt64` value as a `BigInt` will result in an object that
-///         requires more memory than the corresponding `UInt64` integer.
+///         requires more memory than the corresponding `UInt64` integer. Use enum
+///         `Integer` to avoid such overhead.
 public struct BigInt: Hashable,
                       Codable,
+                      Sendable,
                       CustomStringConvertible,
                       CustomDebugStringConvertible {
-  
-  // Redefine the coding key names.
-  enum CodingKeys: String, CodingKey {
-    case uwords = "words"
-    case negative
-  }
   
   // This is an array of `UInt32` words. The lowest significant word comes first in
   // the array.
@@ -278,6 +275,23 @@ public struct BigInt: Hashable,
       words.append((generator.next() as UInt32) & mask)
     }
     self.init(words: words, negative: false)
+  }
+  
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    if let object = try? container.decode(String.self),
+       let bigInt = BigInt(from: object) {
+      self = bigInt
+    } else {
+      throw DecodingError.dataCorrupted(
+        DecodingError.Context(codingPath: decoder.codingPath,
+                              debugDescription: "Invalid BigInt encoding"))
+    }
+  }
+  
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(self.description)
   }
   
   /// Converts the `BigInt` object into a string using the given base. `BigInt.decBase` is
@@ -1012,7 +1026,6 @@ public struct BigInt: Hashable,
 /// all signed integer arithmetic functions.
 extension BigInt: IntegerNumber,
                   SignedInteger,
-                  ExpressibleByIntegerLiteral,
                   ExpressibleByStringLiteral {
   
   /// This is a signed type
@@ -1191,13 +1204,9 @@ extension BigInt: IntegerNumber,
     self.init(Int64(value))
   }
   
-  public init(integerLiteral value: Int64) {
-    self.init(Int64(integerLiteral: value))
-  }
-  
   public init(stringLiteral value: String) {
-    if let bi = BigInt(from: value) {
-      self.init(words: bi.uwords, negative: bi.negative)
+    if let bigInt = BigInt(from: value) {
+      self = bigInt
     } else {
       self.init(0)
     }
@@ -1249,6 +1258,36 @@ extension BigInt: IntegerNumber,
     return other.minus(self)
   }
 }
+
+#if canImport(Swift.StaticBigInt)
+extension BigInt: ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: StaticBigInt) {
+    var uwords = ContiguousArray<UInt32>()
+    let numWords = (value.bitWidth/UInt.bitWidth) + 1
+    for index in 0..<numWords {
+      let myword: UInt64 = UInt64(value[index])
+      uwords.append(BigInt.loword(myword))
+      uwords.append(BigInt.hiword(myword))
+    }
+    if value.signum() < 0 {
+      var subOne = true
+      for index in 0..<uwords.count {
+        if subOne {
+          (uwords[index], subOne) = uwords[index].subtractingReportingOverflow(1)
+        }
+        uwords[index] = ~uwords[index]
+      }
+    }
+    self.init(words: uwords, negative: value.signum() < 0)
+  }
+}
+#else
+extension BigInt: ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Int64) {
+    self.init(Int64(value))
+  }
+}
+#endif
 
 /// Returns the sum of `lhs` and `rhs`
 public func +(lhs: BigInt, rhs: BigInt) -> BigInt {
@@ -1400,4 +1439,3 @@ public func max(_ fst: BigInt, _ snd: BigInt) -> BigInt {
 public func min(_ fst: BigInt, _ snd: BigInt) -> BigInt {
   return fst.compare(to: snd) <= 0 ? fst : snd
 }
-

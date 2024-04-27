@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,6 +11,9 @@
 		CC0741591B8127B600406A43 /* Complex.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0741581B8127B600406A43 /* Complex.swift */; };
 		CC07415B1B813A0600406A43 /* RationalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC07415A1B813A0600406A43 /* RationalTests.swift */; };
 		CC07415D1B813B0300406A43 /* ComplexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC07415C1B813B0300406A43 /* ComplexTests.swift */; };
+		CC0A59F62BC889DF00F155FE /* Integer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0A59F52BC8891800F155FE /* Integer.swift */; };
+		CC0A59F72BC889E000F155FE /* Integer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0A59F52BC8891800F155FE /* Integer.swift */; };
+		CC0A59F92BC990FA00F155FE /* IntegerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC0A59F82BC990AF00F155FE /* IntegerTests.swift */; };
 		CC99F5531B7AA6E200355E1E /* NumberKit.h in Headers */ = {isa = PBXBuildFile; fileRef = CC99F5521B7AA6E200355E1E /* NumberKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC99F55A1B7AA6E200355E1E /* NumberKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC99F54F1B7AA6E200355E1E /* NumberKit.framework */; };
 		CC99F56A1B7AA76600355E1E /* BigIntTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC99F5691B7AA76600355E1E /* BigIntTests.swift */; };
@@ -44,6 +47,8 @@
 		CC0741581B8127B600406A43 /* Complex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Complex.swift; sourceTree = "<group>"; };
 		CC07415A1B813A0600406A43 /* RationalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RationalTests.swift; sourceTree = "<group>"; };
 		CC07415C1B813B0300406A43 /* ComplexTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComplexTests.swift; sourceTree = "<group>"; };
+		CC0A59F52BC8891800F155FE /* Integer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Integer.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		CC0A59F82BC990AF00F155FE /* IntegerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegerTests.swift; sourceTree = "<group>"; };
 		CC5E473320C428D500F21B03 /* LinuxMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LinuxMain.swift; path = Tests/LinuxMain.swift; sourceTree = SOURCE_ROOT; };
 		CC99F54F1B7AA6E200355E1E /* NumberKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NumberKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC99F5521B7AA6E200355E1E /* NumberKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NumberKit.h; sourceTree = "<group>"; };
@@ -125,6 +130,7 @@
 				CCA8E8121F77814F00927A41 /* IntegerNumber.swift */,
 				CCA8E8101F7780C800927A41 /* FloatingPointNumber.swift */,
 				CC99F56B1B7AA81500355E1E /* BigInt.swift */,
+				CC0A59F52BC8891800F155FE /* Integer.swift */,
 				CC0741561B81269200406A43 /* Rational.swift */,
 				CC0741581B8127B600406A43 /* Complex.swift */,
 				CC99F5521B7AA6E200355E1E /* NumberKit.h */,
@@ -141,6 +147,7 @@
 			children = (
 				CC99F56F1B7AAB5300355E1E /* NumberUtilTests.swift */,
 				CC99F5691B7AA76600355E1E /* BigIntTests.swift */,
+				CC0A59F82BC990AF00F155FE /* IntegerTests.swift */,
 				CC07415A1B813A0600406A43 /* RationalTests.swift */,
 				CC07415C1B813B0300406A43 /* ComplexTests.swift */,
 				CCA2651623EF73B700483329 /* CodableTests.swift */,
@@ -245,8 +252,9 @@
 		CC99F5461B7AA6E200355E1E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1530;
 				ORGANIZATIONNAME = ObjectHub;
 				TargetAttributes = {
 					CC99F54E1B7AA6E200355E1E = {
@@ -317,6 +325,7 @@
 				CC99F56E1B7AAAA300355E1E /* NumberUtil.swift in Sources */,
 				CCA8E8111F7780C800927A41 /* FloatingPointNumber.swift in Sources */,
 				CCA8E8131F77814F00927A41 /* IntegerNumber.swift in Sources */,
+				CC0A59F62BC889DF00F155FE /* Integer.swift in Sources */,
 				CC99F56C1B7AA81500355E1E /* BigInt.swift in Sources */,
 				CC0741571B81269200406A43 /* Rational.swift in Sources */,
 			);
@@ -328,6 +337,7 @@
 			files = (
 				CCA2651723EF73B700483329 /* CodableTests.swift in Sources */,
 				CC07415D1B813B0300406A43 /* ComplexTests.swift in Sources */,
+				CC0A59F92BC990FA00F155FE /* IntegerTests.swift in Sources */,
 				CC99F5701B7AAB5300355E1E /* NumberUtilTests.swift in Sources */,
 				CC99F56A1B7AA76600355E1E /* BigIntTests.swift in Sources */,
 				CC07415B1B813A0600406A43 /* RationalTests.swift in Sources */,
@@ -342,6 +352,7 @@
 				CCD2604323F2119F00DFE5A4 /* FloatingPointNumber.swift in Sources */,
 				CCD2604523F211A500DFE5A4 /* Rational.swift in Sources */,
 				CCD2604123F2119900DFE5A4 /* NumberUtil.swift in Sources */,
+				CC0A59F72BC889E000F155FE /* Integer.swift in Sources */,
 				CCD2604623F211A800DFE5A4 /* Complex.swift in Sources */,
 				CCD2604223F2119C00DFE5A4 /* IntegerNumber.swift in Sources */,
 			);
@@ -393,6 +404,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -407,8 +419,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -456,6 +468,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -464,8 +477,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -489,6 +502,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/NumberKit/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -498,6 +512,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.4.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				PRODUCT_BUNDLE_IDENTIFIER = net.objecthub.NumberKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -517,6 +532,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/NumberKit/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -526,6 +542,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.4.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				PRODUCT_BUNDLE_IDENTIFIER = net.objecthub.NumberKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -544,7 +561,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = net.objecthub.NumberKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -562,7 +579,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = net.objecthub.NumberKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -578,6 +595,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEFINES_MODULE = YES;
@@ -585,16 +603,18 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Sources/NumberKit iOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.4.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = net.objecthub.NumberKit;
@@ -617,6 +637,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEFINES_MODULE = YES;
@@ -624,16 +645,18 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Sources/NumberKit iOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.4.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = net.objecthub.NumberKit;
 				PRODUCT_NAME = NumberKit;
