@@ -51,13 +51,21 @@ class RationalTests: XCTestCase {
       XCTFail("cannot parse r5 string")
     }
   }
-
+  
+  func testNormalized() {
+    let r0 = Rational(-128, 64).normalized
+    XCTAssertEqual(r0.numerator, -2)
+    XCTAssertEqual(r0.denominator, 1)
+  }
+  
   func testPlus() {
     let r1 = Rational(16348, 343).plus(24/7)
     XCTAssertEqual(r1, 17524/343)
     XCTAssert(r1 == Rational(from: "17524/343"))
     XCTAssert(r1 == 17524/343)
     let r2: Rational<Int> = (74433/215).plus(312/15)
+    XCTAssertEqual(r2.numerator, 236715)
+    XCTAssertEqual(r2.denominator, 645)
     XCTAssert(r2 == 367)
     let r3: Rational<Int> = (458200/50).plus(3440/17)
     XCTAssert(r3 == 159228/17)
@@ -85,7 +93,7 @@ class RationalTests: XCTestCase {
   }
 
   func testDividedBy() {
-    let r1 = Rational(10, -3).divided(by: -31/49)
+    let r1 = Rational(10, -3).divided(by: Rational(-31, 49))
     XCTAssertEqual(r1, Rational(10 * 49, 3 * 31))
     
     let r2a = Rational(7701851417259962963, 114614500000000) - Rational(1925428469964986987, 28653625000000)
@@ -93,7 +101,7 @@ class RationalTests: XCTestCase {
     let r2 = r2a.divided(by: r2b)
     XCTAssertEqual(r2, Rational(9160000001, 9160000000))
   }
-
+  
   func testRationalize() {
     let r1 = Rational<Int>(1.0/3.0)
     XCTAssertEqual(r1, Rational(1, 3))
@@ -104,13 +112,28 @@ class RationalTests: XCTestCase {
     let r4 = Rational<BigInt>(1931.0 / 9837491.0, precision: 1.0e-14)
     XCTAssertEqual(r4, Rational(BigInt(1931), BigInt(9837491)))
   }
+    
+  func testCasting() {
+    let i1 = Int(Rational(9/3))
+    XCTAssertEqual(i1, 3)
+    let i2 = Int(Rational(10/3))
+    XCTAssertEqual(i2, 3)
+    let i3 = Int(Rational(8/3))
+    XCTAssertEqual(i3, 2)
+    
+    let r4 = Rational<Int>(11/5)
+    let i4 = Int64(r4)
+    XCTAssertEqual(i4, 2)
+  }
 
   static let allTests = [
     ("testConstructors", testConstructors),
+    ("testNormalized", testNormalized),
     ("testPlus", testPlus),
     ("testMinus", testMinus),
     ("testTimes", testTimes),
     ("testDividedBy", testDividedBy),
+    ("testEquals", testEquals),
     ("testRationalize", testRationalize),
   ]
 }
