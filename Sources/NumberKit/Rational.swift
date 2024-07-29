@@ -321,14 +321,27 @@ public struct Rational<T: IntegerNumber>: RationalNumber, CustomStringConvertibl
 
     /// Multiplies this rational value with `rhs` and returns the result.
     public func times(_ rhs: Rational<T>) -> Rational<T> {
-        let lhs = normalized
+        let lhs = self.normalized
         let rhs = rhs.normalized
 
+        // Calculate the GCD of the numerators and denominators
         let gcd1 = T.gcd(lhs.numerator, rhs.denominator)
         let gcd2 = T.gcd(rhs.numerator, lhs.denominator)
 
-        let newNumerator = (lhs.numerator / gcd1) * (rhs.numerator / gcd2)
-        let newDenominator = (lhs.denominator / gcd2) * (rhs.denominator / gcd1)
+        // Calculate the new numerator and denominator using overflow-reporting operations
+        let (num1, num1Overflow) = lhs.numerator.dividedReportingOverflow(by: gcd1)
+        let (num2, num2Overflow) = rhs.numerator.dividedReportingOverflow(by: gcd2)
+        let (denom1, denom1Overflow) = lhs.denominator.dividedReportingOverflow(by: gcd2)
+        let (denom2, denom2Overflow) = rhs.denominator.dividedReportingOverflow(by: gcd1)
+
+        // Multiply the numerators and denominators
+        let (newNumerator, numerOverflow) = num1.multipliedReportingOverflow(by: num2)
+        let (newDenominator, denomOverflow) = denom1.multipliedReportingOverflow(by: denom2)
+
+        // Check for overflow
+        if num1Overflow || num2Overflow || denom1Overflow || denom2Overflow || numerOverflow || denomOverflow {
+            fatalError("Multiplication overflow")
+        }
 
         return Rational(newNumerator, newDenominator).normalized
     }

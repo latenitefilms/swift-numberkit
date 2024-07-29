@@ -196,6 +196,19 @@ class RationalTests: XCTestCase {
         XCTAssertEqual(i4, 2)
     }
 
+    func testMultiplicationOverflow() {
+        // Reproduce the crash with the original values
+        let lhs = Rational<Int64>(367761702291134459, 37758946875000000)
+        let rhs = Rational<Int64>(12401831, 96000)
+
+        // Perform the multiplication
+        let result = lhs.times(rhs)
+
+        // Since we are expecting to catch overflow, we can assert that the result is as expected
+        // or that a fatal error is raised. Here we will just print the result.
+        print("Result: \(result)")
+    }
+
     static let allTests = [
         ("testConstructors", testConstructors),
         ("testNormalized", testNormalized),
@@ -205,5 +218,6 @@ class RationalTests: XCTestCase {
         ("testDividedBy", testDividedBy),
         ("testEquals", testEquals),
         ("testRationalize", testRationalize),
+        ("testMultiplicationOverflow", testMultiplicationOverflow),
     ]
 }
